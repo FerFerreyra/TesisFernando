@@ -1,0 +1,327 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+	
+	\begin{dfn}
+	Una signatura bicerrada $G$ es una colección de generadores $G_1$ y tipos básicos $G_0$ junto a un par de funciones: \\
+		$$\signature{G_1}{T(G_0)}$$
+	donde $T(G_0)$ es el conjunto de tipos bicerrados dados por la siguiente definición
+	
+	$$T(G_0) ::== a, b \in G_0 | a \otimes b | a/b | a \backslash b$$
+	
+	Un morfismo de signaturas bicerradas $\varphi : G \to \Gamma$ es un par de funciones $\varphi_0 : G_0 \to \Gamma_0$ y $\varphi_1 : G_1 \to \Gamma_1$ tales que hacen conmutar el diagrama de signaturas. A la categorías de signaturas monoidales le llamamos \textbf{BcSig}. \\
+	\end{dfn}
+	
+	\begin{dfn}
+	Una categoría monoidal bicerrada \textbf{C} es una categoría monoidal equipada con dos bifuntores $- \backslash - : \textbf{C}^\textbf{op} \times \textbf{C} \to \textbf{C}$ y $- / - : \textbf{C} \times \textbf{C}^\textbf{op} \to \textbf{C}$ 
+	tales que para cualquier objeto $a$, $a \otimes - \dashv a \backslash -$ y $- \otimes a \dashv - / a$. Es decir, tenemos los siguientes isomorfismos naturales para cualesquiera objetos $a,b,c$
+	
+	\begin{equation}
+		\textbf{C}(a,c/b) \cong \textbf{C}(a \otimes b, c) \cong \textbf{C}(b, a\backslash c)
+		\label{curry}	
+	\end{equation}
+	
+	
+	\end{dfn}
+	
+	Estos isos son usualmente llamados curry (cuando $\otimes$ es reemplazado) o uncurry. Con los funtores monoidales como morfismos, las categorías bicerradas forman la categoría \textbf{BcCat}.
+	
+	El desarrollo de las gramáticas que veremos este capítulo estuvo intimamento relacionado con la lógica. Es por esto, que vale la pena mencionar que los morfismos en una categoría bicerrada pueden ser pensados como deducciones en un sistema formal. En particular, los axiomas de una categoría monoidal pueden ser representados como reglas de inferencia de la siguiente manera: 
+	\begin{multicols}{3}
+		\[
+		\begin{prooftree}
+			\hypo{a}
+			\infer1[\tt{id}]{a \to a}
+		\end{prooftree}
+		\]
+		\[
+		\begin{prooftree}
+			\hypo{a\to b}
+			\hypo{b\to c}
+			\infer2[$\circ$]{a \to c}
+		\end{prooftree}
+		\]
+		\[
+		\begin{prooftree}
+			\hypo{a \to b}
+			\hypo{c \to d}
+			\infer2[$\otimes$]{a \otimes c \to c \otimes d}
+		\end{prooftree}
+		\]
+	\end{multicols}
+	
+	Por su parte, el curry y uncurry en una categoría bicerrada puede ser visto de la siguiente manera:
+	
+	$$a \to c/b \quad \text{sii} \quad a \otimes b \to c \quad \text{sii} \quad b \to a \backslash c$$
+	
+	Usualmente pensamos el curry como una manera de transformar una función que toma dos argumentos a una función que toma sólo uno y arroja como resultado otra función.\\
+	
+	Dada $G$ una signatura bicerrada, la categoría libre bicerrada \textbf{BC}$(G)$ contiene todos los morfismos que puede ser generados mediante las cuatro reglas de inferencia anterior por los generadores de $G$. \\
+	
+	Ahora bien, veamos la gramática que puede generar este tipo de categorías. 
+	
+	\begin{dfn}
+		Una gramática bicerrada $G$ es un signatura bicerrada de la siguiente forma:
+			$$\signature{G}{T(B+V)}$$
+		donde $B$ es un vocabulario y $B$ es un conjunto de tipos básicos con un tipo distinguido $s$. El lenguaje generado por $G$ es
+		\[
+			\mathcal{L}(G)= \{ u \in V^* | \exists f:u \to s \text{ en } \textbf{BC}(G) \}
+		\]
+	\end{dfn}
+	
+	A continuación veremos que tres tipos de gramáticas importantes, conocidas usualmente como gramáticas categoriales: gramáticas AB, gramáticas de Lambek y gramáticas categoriales combinatorias pueden ser vistas como gramáticas bicerradas. Antes de ello, debemos saber a que nos referimos a encontrar una gramática en otras.
+	
+	\section{Reducciones gramaticales}
+	
+	\begin{dfn}
+		Sean $G$ y $G'$ gramáticas sobre el mismo vocabulario. Decimos que $G$ se reduce débilmente a $G'$, $G \leq G'$, si $\mathcal{L}(G) \subset \mathcal{L}(G')$. $G$ es débilmente equivalente a $G'$ si $\mathcal{L}(G) = \mathcal{L}(G')$. 
+	\end{dfn}
+	
+	Notemos que aunque dos gramáticas sean debilmente equivalente, las derivaciones entre ambas pueden ser completamente distintas. Por ello, necesitamos una definición más fuerte de reducción entre gramáticas.
+	
+	\begin{dfn}
+		Sean $G$ y $G'$ gramáticas monoidales sobre el mismo vocabulario. Decimos que $G$ se reduce fuertemente a $G'$ si hay un morfismo de signaturas monoidales 	$\varphi: G \to G'$ tal que $\varphi_0(v)=v$ para todo $v \in V$ y $\varphi_0(s)=s'$. Las gramáticas monoidales con reducciones fuertes como morfismos forman la subcategoría $\textbf{Grammar}_V$. Dos gramáticas son fuertemente equivalentes si son isomorfas en $\textbf{Grammar}_V$. 
+	\end{dfn}
+	
+	Como es de esperarse, tenemos el siguiente resultado
+	
+	\begin{prop}
+		Si $G$ se reduce fuertemente a $G'$, entonces $G\leq G'$.
+	\end{prop}
+	\begin{proof}
+		Sean $G$ y $G'$ gramáticas monoidales tales que $G$ se reduce fuertemente a $G'$. Veamos que $\mathcal{L}(G) \subset \mathcal{L}(G')$.\\
+		Sea $w \in \mathcal{L}(G)$. Entonces existe un morfismo $f:w \to s$ en $\textbf{MC}(G)$.\\
+		Ya que $G$ se reduce fuertemente a $G'$ existe el morfismo de signatura monoidales $\varphi: G \to G'$ tal que $\varphi_0(v)=v$ para todo $v \in V$ y $\varphi_0(s)=s'$. Además, al ser un morfismo de signaturas monoidales el siguiente diagrama conmuta.
+		\[
+		\begin{tikzcd}
+			G_0^* \arrow{d}{\phi_0} & G_1 \arrow{r}{\tt{dom}} \arrow{l}{\tt{cod}} \arrow{d}{\phi_1} & G_0^* \arrow{d}{\phi_0} \\
+			\Gamma_0^* & \Gamma_1 \arrow{r}{\tt{dom}} \arrow{l}{\tt{cod}} & \Gamma_0^*
+		\end{tikzcd}
+		\]
+		Entonces
+		$${\tt{dom}}(\varphi_1(f))=\varphi_0({\tt{dom}}(f))=\varphi_0(w)=w$$
+		y 
+		$${\tt{cod}}(\varphi_1(f))=\varphi_0({\tt{cod}}(f))=\varphi_0(s)=s'$$
+		Por lo tanto, $\varphi_1(f):w \to s' \in \textbf{MC}(G')$. Por lo tanto, $w \in \mathcal{L}(G')$ y así $\mathcal{L}(G) \subset \mathcal{L}(G')$ como queríamos demostrar. 
+	\end{proof}
+	
+	Notemos que una reducción fuerte es solo re etiquetar las palabras y el tipo de oración, es decir, hacemos esencialmente lo mismo. Así, esta noción puede resultar demasiado fuerte, por ello necesitamos un punto medio entre ambas.
+	
+	\begin{dfn}
+		Sean $G$ y $G'$ gramáticas monoidales sobre el mismo vocabulario $V$. Una reducción funtorial de $G$ a $G'$ es un funtor $F: \textbf{MC}(G) \to \textbf{MC}(G')$ tales que $F_0(v)=v$ para todo $v \in V$ y $F_0(s)=s'$. Una equivalencia funtorial entre $G$ y $G'$ es una reducción funtorial de $G$ a $G'$ y una de $G'$ a $G$. 
+	\end{dfn}
+	
+	\nota{Agregar ejemplo para ver que una reducción funtorial es más débil que una fuerte.}
+	
+	\section{Gramáticas AB}
+	
+	En $1953$, Ajdiuciewicz y Bar-Hillel introducen la primera de las gramáticas categoriales, las gramáticas AB. Sea $B$  un conjunto de tipos básicos, definimos los tipos de una gramática AB como
+	
+	$$T_{AB}(B)::==a \in B | a \backslash a | a/a$$
+	
+	A los últimos dos tipos se les conoce como fracciones. \\
+	La idea de las gramáticas categoriales, como su nombre lo indica, es asignar a cada palabra una categoría determinada cuyo objetivo es indicar la manera en que las palabras se pueden relacionar entre sí de una manera significativa. \\
+	
+	Por ejemplo, consideremos la oración ''Valentina come pastel''. Notemos que las palabras ''Valentina'' y ''pastel'' son sustantivos, así asignemosles el mismo tipo {\tt{n}}. Por otro lado, la palabra ''come'' es el núcleo de la oración, así que debería tener el tipo $\tt{s}$, pero para que tenga sentido a su izquierda necesita tener un sustantivo como sujeto, el tipo $\tt{n\backslash s}$ representa esto, y a su derecha también tiene otro sustantivo, así asignemosle finalmente el tipo $(\tt{n\backslash s})/n$. Entonces la derivación correspondiente a la oración ''Valentina come pastel'' es
+	
+	$$\tt{n} \quad (\tt{n\backslash s})/n \quad \tt{n} \quad \to \quad \tt{n} \quad \tt{n\backslash s} \quad \to s$$
+	
+	Formalmente, definimos una gramática AB de la siguiente manera
+	
+	\begin{dfn}
+		Una gramática AB es una tupa $G=(V,B,\Delta,s)$ donde $B$ es un vocabulario, $B$ es un conjunto de tipos básicos, $\Delta \subset V \times T_{AB}(B)$ es un léxico. Las reglas de las gramáticas AB están dadas por la siguiente signatura monoidal 
+		\begin{figure}[H]
+			\includegraphics[scale=18]{diagrama/AB.png}
+			\centering
+		\end{figure}
+		con $a,b \in T_{AB}(B)$. El lenguaje generado por $G$ está dado por:
+		$$\mathcal{L}(G)= \{ u \in V^*|\exists g:u \to s \in \textbf{MC}(\Delta + R_{AB}) \}$$
+	\end{dfn}
+	
+	Veamos el siguiente ejemplo:
+	
+	\begin{ej}
+		Consideremos el vocabulario $V= \{ Ronaldo,compra,una,casa \}$ y los tipos básicos $B= \{s,n, a\}$ que corresponde a una oración, a un sustantivo y a un artículo. Tomemos el léxico $\Delta$ como
+		$$\Delta(Ronaldo)=n \quad \Delta(compra)=n \backslash (s/n) \quad \Delta(una)=a \quad \Delta(casa)=a\backslash n$$
+		Entonces la oración ''Ronaldo compra una casa'' es gramaticalmente correcta de acuerdo a la siguiente derivación
+		\begin{figure}[H]
+			\includegraphics[scale=28]{diagrama/ejemplo1.png}
+			\centering
+		\end{figure}
+	\end{ej}
+	 
+	Veamos el resultado principal de esta sección
+	
+	\begin{prop}
+		Las gramáticas $AB$ se reducen funtorialmente a una gramática bicerrada.
+	\end{prop}
+	\begin{proof}
+		Ya que ambas son categorías monoidales libres, para exhibir un funtor basta de las gramáticas $AB$ a las bicerradas, basta asignar a los generadores $R_[AB]$ en la bicerrada, pero veamos que estos se pueden obtener de la definición de categoría bicerrada. Sean $a,b,c$ objetos, entonces
+		\begin{multicols}{2}
+			\[
+			\begin{prooftree}
+				\hypo{a\backslash b}
+				\infer1[\tt{id}]{a\backslash b \to a\backslash b}
+				\infer1[\ref{curry}]{a \otimes (a \backslash b) \to b}
+			\end{prooftree}
+			\]
+			\[
+			\begin{prooftree}
+				\hypo{a/b}
+				\infer1[\tt{id}]{a/b \to a/b}
+				\infer1[\ref{curry}]{(a/b)\otimes b \to a}
+			\end{prooftree}
+			\]
+		\end{multicols}
+		como queríamos probar. 
+	\end{proof}
+	  
+	\section{Gramáticas de Lambek} 
+	
+	Un par de años más tarde, Joachim Lambek introdujo dos reglas más a las gramáticas categoriales: la composición y el \textit{type raising}. Aunque ambas reglas no le agregan poder expresivo a las gramáticas, sí permite realizar las derivaciones de una manera más literal. 
+	
+	\begin{dfn}
+		Un gramática de Lambek es una tupa $G=(V,B, \Delta, s)$ donde $V$ es un vocabulario, $B$ es un conjunto finito de tipos básicos y $\Delta \subset V \times T(B)$ es un léxico con la siguiente signatura $R_L$
+		
+		\begin{figure}[H]
+			\includegraphics[scale=18]{diagrama/lambek.png}
+			\centering
+		\end{figure}
+		El lenguaje generado por $G$ se define como
+		
+		$$\mathcal{L}(G)= \{ u \in V^*|\exists g:u \to s \in \textbf{MC}(\Delta + R_{L}) \}$$
+		
+	\end{dfn}
+	
+	\begin{ej}
+		\nota{Pendiente}
+	\end{ej}
+	
+	Notemos que los tipos usados son exactamente los de una categoría bicerrada.
+	
+	\begin{prop}
+		Las gramáticas $AB$ se reducen funtorialmente a una gramática bicerrada.
+	\end{prop} 
+	\begin{proof}
+		Como en la proposición anterior, basta ver que podemos generar $R_L$ en una categoría bicerrada. Ya sabemos que las dos $app$ es posibles, veamos el resto. Sean $a,b$ objetos. Construyamos las derivaciones correspondientes a $comp$
+		\begin{multicols}{2}
+			\[
+			\begin{prooftree}
+				\hypo{a \backslash c}
+				\infer1[{\tt{id}}]{a \backslash c \to a \backslash c}
+				\infer1[\ref{curry}]{a \otimes a \backslash b \to b}
+				\hypo{b \backslash c}
+				\infer1[{\tt{id}}]{b \backslash c \to b \backslash c}
+				\infer2[$\otimes$ \text{ y } $\circ$]{a \otimes a \backslash b \otimes b \backslash c \to c}
+				\infer1[\ref{curry}]{a \backslash b \otimes b \backslash c \to a \backslash c}
+			\end{prooftree}
+			\]
+			\[
+			\begin{prooftree}
+				\hypo{a/b}
+				\infer1[\tt{id}]{a/b \to a/b}
+				\hypo{b/c}
+				\infer1[\tt{id}]{b/c \to b/c}
+				\infer1[\ref{curry}]{b/c \otimes c \to b}
+				\infer2[$\otimes$ \text{ y } $\circ$]{a/b \otimes b/c \otimes c \to a}
+				\infer1[\ref{curry}]{a/b \otimes b/c \to a/c}
+			\end{prooftree}
+			\]
+		\end{multicols}
+		Concluyamos con las derivaciones de $tyr$.
+		\begin{multicols}{2}
+			\[
+			\begin{prooftree}
+				\hypo{a \backslash b}
+				\infer1[{\tt{id}}]{a \backslash b \to a \backslash b}
+				\infer1[\ref{curry}]{a \otimes (a \backslash b) \to b}
+				\infer1[\ref{curry}]{a \to b/(a \backslash b)}
+			\end{prooftree}
+			\]
+			\[
+			\begin{prooftree}
+				\hypo{b/a}
+				\infer1[{\tt{id}}]{b/a \to b/a}
+				\infer1[\ref{curry}]{(b/a)\otimes a \to b}
+				\infer1[\ref{curry}]{a \to (b/a) \backslash b}
+			\end{prooftree}
+			\]
+		\end{multicols} 
+		con lo cual terminamos la prueba. 
+	\end{proof}
+	
+	\section{Gramáticas combinatoria}
+	
+	En los ochentas, Stuart Schieber demostró que hay lenguas que no pueden ser generadas por gramáticas libre de contexto, essto es porque ciertas oraciones involucran de manera natural dependencias cruzadas, fenómeno que ocurre cuando dos series de palabras se mezclan entre sí. AUnque el fenomeno no es usual en español o inglés, es muy común en el suizo-alemán, veamos el siguiente ejemplo:\\
+	... mer \textcolor{red}{em Hans} \textcolor{blue}{es huss} \textcolor{red}{halfed} \textcolor{blue}{aastriiche}\\
+	Que se traduce como: ... nosotros \textcolor{red}{ayudamos a Hans} a \textcolor{blue}{pintar la casa}.\\
+	Otro ejemplo sencillo es la oración: ''Él considera incompetente a cualquiera que...''.
+	Para analizar estos caso, se extienden la gramáticas anteriores a la gramática categorial combinatoria mediante la inclusión de dos reglas que composición cruzada.
+	
+	\begin{dfn}
+		Una GCC es una tupla $G=(V,B, \Delta, s)$ donde $V$ es un vocabulario, $B$ es un conjuntos de tipos y $\Delta \subset V \times T(B)$ es un léxico. La signatura $R_{GCC}$ es la signatura $R_{L}$ más las siguientes dos reglas para todo $a,b,c$ objetos:
+		\begin{figure}[H]
+			\includegraphics[scale=18]{diagrama/CCG.png}
+			\centering
+		\end{figure}
+		El lenguaje generado por $G$ se define como
+		
+		$$\mathcal{L}(G)= \{ u \in V^*|\exists g:u \to s \in \textbf{MC}(\Delta + R_{GCC}) \}$$
+	\end{dfn}
+	
+	\begin{ej}
+		\nota{Pendiente}
+	\end{ej}
+	
+	A diferencia de las dos gramáticas categoriales anteriores, la signatura de $CCG$ no puede ser deducida de los axiomas de categoría bicerrada, pues todos los axiomas preservan el orden de los tipos. Así, nuestro mejor intentó sería agregar directamente las reglas $xcomp$ a la signatura de las gramáticas monoidales, o bien, trabajar en categorías cerradas.
+	
+	\begin{dfn}
+		Una categoría monoidal simétrica \textbf{C} es una categoría monoidal junto a una transformación natural $\sigma:a\otimes b \to b \otimes a$ que satisface  
+		\begin{figure}[H]
+			\includegraphics[scale=.5]{diagrama/swap.png}
+			\centering
+		\end{figure}
+		para cualesquiera $a,b,c \in textbf{C}_0$ y $f:a \to b \in \textbf{C}_1$.
+	\end{dfn} 
+	
+	\begin{dfn}
+		Una categoría cerrada es una categoría simétrica bicerrada.
+	\end{dfn}
+	
+	\begin{prop}
+		Una categoría cerrada tiene las reglas $xcomp$ como morfismos.
+	\end{prop}
+	\begin{proof}
+		Sean $a,b,c$ objetos una categoría cerrada libre. Basta mostrar las derivaciones para $xcomp$.
+		\begin{multicols}{2}
+			\[
+		\begin{prooftree}
+			\hypo{a/b}
+			\infer1[{\tt{id}}]{a/b \to a/b}
+			\hypo{c \backslash b}
+			\infer1[{\tt{id}}]{c \backslash b \to c \backslash b}
+			\infer1[\ref{curry}]{c \otimes c \backslash b \to b}
+			\infer2[$\otimes$ y $\circ$]{a/b \otimes c \otimes c \backslash b \to a}
+			\infer1[$\sigma$]{c\otimes a/b \otimes c \backslash b \to a}
+			\infer1[\ref{curry}]{a/b \otimes c \backslash b \to c \backslash a}
+		\end{prooftree}
+			\]
+			\[
+			\begin{prooftree}
+				\hypo{a/b}
+				\infer1[{\tt{id}}]{a/b \to a/b}
+				\infer1[\ref{curry}]{a/b \otimes b \to a}
+				\hypo{a \backslash c}
+				\infer1[{\tt{id}}]{a \backslash c \to a \backslash c}
+				\infer2[$\otimes$ y $\circ$]{a/b \otimes b \otimes a \backslash c \to c}
+				\infer1[$\sigma$]{a/b \otimes a \backslash c \otimes b \to c}
+				\infer1[\ref{curry}]{a/b \otimes a \backslash c \to c/b}
+			\end{prooftree}
+			\]
+		\end{multicols}
+		
+	\end{proof}
+	
+	Una última observación es que podría resultar una mala idea trabajar gramáticas sobre categorías cerradas sin restricciones, pues entonces corremos el riesgo de perder el orden de las palabras en una oración. Sin embargo, con la aplicación exclusiva de $xcomp$ lo anterior se sospecha no ocurre. 
+	
+\end{document}

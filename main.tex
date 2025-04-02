@@ -1,0 +1,47 @@
+\documentclass[letterpaper,spanish,12pt]{book}
+
+\input{header}
+
+%PORTADA%
+\author{Fernando Herrera Ferreyra}
+\title{Un acercamiento a la gramática vía Teoría de categorías}
+\faculty{Facultad de Ciencias}
+\degree{Licenciado en Matemáticas}
+\supervisor{Dr. Omar Antolín Camerena}
+\cityandyear{Ciudad Universitaria, CDMX, 2024}
+\logouni{Escudo-UNAM}
+\logofac{Escudo-FCIENCIAS}
+
+
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\setcounter{page}{2}
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introducción}
+\subfile{capitulos/introduccion}
+	
+\chapter{Gramáticas regulares}
+\subfile{capitulos/capitulo1}
+
+\chapter{Gramáticas libres de contexto}
+\subfile{capitulos/capitulo2}
+
+\chapter{Gramáticas recursivamente enumerables}
+\subfile{capitulos/capitulo3}
+
+\chapter{Gramáticas categoriales}
+\subfile{capitulos/capitulo4}
+
+\chapter{Pregrupos}
+\subfile{capitulos/capitulo5}
+
+\bibliography{TeX/bibliografia}
+
+\end{document}

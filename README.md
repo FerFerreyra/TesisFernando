@@ -32,4 +32,5 @@ Implementar los modelos mediante las clases que integran la librería DisCoPy.
 2. Gramáticas libres de contexto
 3. Gramáticas recursivamente enumerable
 4. Gramáticas categoriales
-5. Pregrupos y dependencias
+5. Pregrupos
+6. DisCoPy
